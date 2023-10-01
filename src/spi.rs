@@ -9,7 +9,7 @@ use embedded_hal::spi::blocking::{SpiBus, SpiDevice};
 #[cfg(feature = "async")]
 use embedded_hal_async::delay::DelayUs as AsyncDelayUs;
 #[cfg(feature = "async")]
-use embedded_hal_async::spi::{SpiBus as AsyncSpiBus, SpiDevice as AsyncSpiDevice};
+use embedded_hal_async::spi::SpiDevice as AsyncSpiDevice;
 
 #[cfg(feature = "async")]
 use super::{AsyncBME280Common, AsyncInterface};
@@ -54,7 +54,6 @@ pub struct AsyncBME280<SPI> {
 impl<SPI, SPIE> AsyncBME280<SPI>
 where
     SPI: AsyncSpiDevice<Error = SPIE>,
-    SPI::Bus: AsyncSpiBus<u8>,
 {
     /// Create a new BME280 struct
     pub fn new(spi: SPI) -> Result<Self, Error<SPIError<SPIE>>> {
@@ -169,11 +168,10 @@ where
 impl<SPI> AsyncInterface for AsyncSPIInterface<SPI>
 where
     SPI: AsyncSpiDevice,
-    SPI::Bus: AsyncSpiBus<u8>,
 {
     type Error = SPIError<SPI::Error>;
 
-    type ReadRegisterFuture<'a> = impl Future<Output = Result<u8, Error<Self::Error>>>
+    type ReadRegisterFuture<'a> = impl Future<Output = Result<u8, Error<Self::Error>>> + 'a
     where
         SPI: 'a;
     fn read_register<'a>(&'a mut self, register: u8) -> Self::ReadRegisterFuture<'a> {
@@ -184,7 +182,7 @@ where
         }
     }
 
-    type ReadDataFuture<'a> = impl Future<Output = Result<[u8; BME280_P_T_H_DATA_LEN], Error<Self::Error>>>
+    type ReadDataFuture<'a> = impl Future<Output = Result<[u8; BME280_P_T_H_DATA_LEN], Error<Self::Error>>> + 'a
     where
         SPI: 'a;
     fn read_data<'a>(&'a mut self, register: u8) -> Self::ReadDataFuture<'a> {
@@ -195,7 +193,7 @@ where
         }
     }
 
-    type ReadPtCalibDataFuture<'a> = impl Future<Output = Result<[u8; BME280_P_T_CALIB_DATA_LEN], Error<Self::Error>>>
+    type ReadPtCalibDataFuture<'a> = impl Future<Output = Result<[u8; BME280_P_T_CALIB_DATA_LEN], Error<Self::Error>>> + 'a
     where
         SPI: 'a;
     fn read_pt_calib_data<'a>(&'a mut self, register: u8) -> Self::ReadPtCalibDataFuture<'a> {
@@ -206,7 +204,7 @@ where
         }
     }
 
-    type ReadHCalibDataFuture<'a> = impl Future<Output = Result<[u8; BME280_H_CALIB_DATA_LEN], Error<Self::Error>>>
+    type ReadHCalibDataFuture<'a> = impl Future<Output = Result<[u8; BME280_H_CALIB_DATA_LEN], Error<Self::Error>>> + 'a
     where
         SPI: 'a;
     fn read_h_calib_data<'a>(&'a mut self, register: u8) -> Self::ReadHCalibDataFuture<'a> {
@@ -217,7 +215,7 @@ where
         }
     }
 
-    type WriteRegisterFuture<'a> = impl Future<Output = Result<(), Error<Self::Error>>>
+    type WriteRegisterFuture<'a> = impl Future<Output = Result<(), Error<Self::Error>>> + 'a
     where
         SPI: 'a;
     fn write_register<'a>(
@@ -248,7 +246,6 @@ where
 impl<SPI> AsyncSPIInterface<SPI>
 where
     SPI: AsyncSpiDevice,
-    SPI::Bus: AsyncSpiBus<u8>,
 {
     async fn read_any_register(
         &mut self,
