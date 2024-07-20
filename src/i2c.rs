@@ -3,9 +3,9 @@
 #[cfg(feature = "async")]
 use core::future::Future;
 #[cfg(feature = "sync")]
-use embedded_hal::delay::blocking::DelayUs;
+use embedded_hal::delay::DelayUs;
 #[cfg(feature = "sync")]
-use embedded_hal::i2c::blocking::I2c;
+use embedded_hal::i2c::I2c;
 use embedded_hal::i2c::ErrorType;
 #[cfg(feature = "async")]
 use embedded_hal_async::delay::DelayUs as AsyncDelayUs;
@@ -83,7 +83,7 @@ where
                 delay,
                 Configuration::default()
                     .with_humidity_oversampling(Oversampling::Oversampling1X)
-                    .with_pressure_oversampling(Oversampling::Oversampling16X)
+                    .with_pressure_oversampling(Oversampling::Oversampling8X)
                     .with_temperature_oversampling(Oversampling::Oversampling2X)
                     .with_iir_filter(IIRFilter::Coefficient16),
             )

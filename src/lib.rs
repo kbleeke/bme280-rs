@@ -20,7 +20,7 @@
 #![cfg_attr(not(feature = "with_std"), no_std)]
 #![cfg_attr(
     feature = "async",
-    feature(type_alias_impl_trait)
+    feature(type_alias_impl_trait, impl_trait_in_assoc_type)
 )]
 
 //! A platform agnostic Rust driver for the Bosch BME280 and BMP280, based on the
@@ -74,7 +74,7 @@ pub mod spi;
 use core::future::Future;
 use core::marker::PhantomData;
 #[cfg(feature = "sync")]
-use embedded_hal::delay::blocking::DelayUs;
+use embedded_hal::delay::DelayUs;
 #[cfg(feature = "async")]
 use embedded_hal_async::delay::DelayUs as AsyncDelayUs;
 
